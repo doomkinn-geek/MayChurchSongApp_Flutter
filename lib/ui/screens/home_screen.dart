@@ -11,7 +11,7 @@ import '../../utils/constants.dart';
 import 'song_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -94,19 +94,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Переходим к экрану песни
     if (mounted) {
-      if (Platform.isIOS) {
-        Navigator.of(context, rootNavigator: true).push(
-          CupertinoPageRoute(
-            builder: (context) => SongDetailScreen(song: song),
-          ),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SongDetailScreen(song: song),
-          ),
-        );
+      final result = await (Platform.isIOS
+          ? Navigator.of(context, rootNavigator: true).push(
+              CupertinoPageRoute(
+                builder: (context) => SongDetailScreen(song: song),
+              ),
+            )
+          : Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SongDetailScreen(song: song),
+              ),
+            ));
+      
+      // После возвращения обновляем данные (для обновления иконки избранного)
+      if (mounted) {
+        await _loadSongs();
+        // Если был активен поиск, повторяем его
+        if (_searchController.text.isNotEmpty) {
+          await _performSearch(_searchController.text);
+        }
       }
     }
   }

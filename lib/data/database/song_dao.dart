@@ -99,6 +99,8 @@ class SongDao {
       where: 'id = ?',
       whereArgs: [id],
     );
+    // Принудительно сохраняем изменения
+    await _flushDatabase();
   }
 
   // Обновить время последнего доступа
@@ -110,6 +112,20 @@ class SongDao {
       where: 'id = ?',
       whereArgs: [id],
     );
+    // Принудительно сохраняем изменения
+    await _flushDatabase();
+  }
+
+  // Принудительное сохранение изменений в БД (flush)
+  Future<void> _flushDatabase() async {
+    try {
+      final db = await SongDatabase.database;
+      // Выполняем checkpoint для WAL режима SQLite
+      await db.execute('PRAGMA wal_checkpoint(FULL)');
+    } catch (e) {
+      print('Ошибка при flush БД: $e');
+      // Не пробрасываем ошибку дальше, т.к. это не критично
+    }
   }
 
   // Очистить все lastAccessed значения

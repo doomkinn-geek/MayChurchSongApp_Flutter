@@ -9,12 +9,12 @@ class AdaptiveScaffold extends StatelessWidget {
   final List<Widget> screens;
 
   const AdaptiveScaffold({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTabChanged,
     required this.tabs,
     required this.screens,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

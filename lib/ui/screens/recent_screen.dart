@@ -8,7 +8,7 @@ import '../widgets/song_item.dart';
 import 'song_detail_screen.dart';
 
 class RecentScreen extends StatefulWidget {
-  const RecentScreen({Key? key}) : super(key: key);
+  const RecentScreen({super.key});
 
   @override
   State<RecentScreen> createState() => _RecentScreenState();
@@ -21,22 +21,29 @@ class _RecentScreenState extends State<RecentScreen> {
   @override
   void initState() {
     super.initState();
+    // Загружаем данные при каждом создании экрана
     _loadRecent();
   }
 
   Future<void> _loadRecent() async {
+    if (!mounted) return;
+    
     setState(() => _isLoading = true);
 
     try {
       final repository = context.read<SongRepository>();
       final songs = await repository.getRecentSongs();
       
-      setState(() {
-        _recentSongs = songs;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _recentSongs = songs;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
       print('Ошибка загрузки недавних: $e');
     }
   }
@@ -46,19 +53,22 @@ class _RecentScreenState extends State<RecentScreen> {
     await repository.markAsViewed(song.id);
 
     if (mounted) {
-      if (Platform.isIOS) {
-        Navigator.of(context, rootNavigator: true).push(
-          CupertinoPageRoute(
-            builder: (context) => SongDetailScreen(song: song),
-          ),
-        );
-      } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SongDetailScreen(song: song),
-          ),
-        );
+      await (Platform.isIOS
+          ? Navigator.of(context, rootNavigator: true).push(
+              CupertinoPageRoute(
+                builder: (context) => SongDetailScreen(song: song),
+              ),
+            )
+          : Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SongDetailScreen(song: song),
+              ),
+            ));
+      
+      // После возвращения с экрана песни обновляем список
+      if (mounted) {
+        await _loadRecent();
       }
     }
   }
@@ -66,6 +76,7 @@ class _RecentScreenState extends State<RecentScreen> {
   Future<void> _toggleFavorite(Song song) async {
     final repository = context.read<SongRepository>();
     await repository.toggleFavorite(song.id);
+    // Немедленно обновляем список после изменения (для обновления иконки)
     await _loadRecent();
   }
 
@@ -85,6 +96,13 @@ class _RecentScreenState extends State<RecentScreen> {
         title: const Text('Недавние'),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadRecent,
+            tooltip: 'Обновить',
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -113,8 +131,13 @@ class _RecentScreenState extends State<RecentScreen> {
 
   Widget _buildIOSLayout() {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Недавние'),
+      navigationBar: CupertinoNavigationBar(
+        middle: const Text('Недавние'),
+        trailing: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: const Icon(CupertinoIcons.refresh),
+          onPressed: _loadRecent,
+        ),
       ),
       child: SafeArea(
         child: _isLoading
@@ -143,4 +166,3 @@ class _RecentScreenState extends State<RecentScreen> {
     );
   }
 }
-

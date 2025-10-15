@@ -8,7 +8,7 @@ import '../widgets/song_item.dart';
 import 'song_detail_screen.dart';
 
 class RecentScreen extends StatefulWidget {
-  const RecentScreen({Key? key}) : super(key: key);
+  const RecentScreen({super.key});
 
   @override
   State<RecentScreen> createState() => _RecentScreenState();

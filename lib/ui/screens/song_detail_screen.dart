@@ -11,7 +11,7 @@ import '../../utils/constants.dart';
 class SongDetailScreen extends StatefulWidget {
   final Song song;
 
-  const SongDetailScreen({Key? key, required this.song}) : super(key: key);
+  const SongDetailScreen({super.key, required this.song});
 
   @override
   State<SongDetailScreen> createState() => _SongDetailScreenState();

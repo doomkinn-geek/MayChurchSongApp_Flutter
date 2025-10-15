@@ -8,7 +8,7 @@ import '../../data/services/background_update_service.dart';
 import '../widgets/platform_widgets.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();

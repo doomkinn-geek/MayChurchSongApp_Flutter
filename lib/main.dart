@@ -47,7 +47,7 @@ void main() async {
 }
 
 class MayChurchSongApp extends StatelessWidget {
-  const MayChurchSongApp({Key? key}) : super(key: key);
+  const MayChurchSongApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class MayChurchSongApp extends StatelessWidget {
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -92,12 +92,16 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  // Счетчик для принудительного пересоздания экранов при смене вкладки
+  int _recentScreenKey = 0;
+  int _favoritesScreenKey = 0;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    RecentScreen(),
-    FavoritesScreen(),
-    SettingsScreen(),
+  // Генерируем экраны динамически с уникальными ключами
+  List<Widget> get _screens => [
+    const HomeScreen(),
+    RecentScreen(key: ValueKey('recent_$_recentScreenKey')),
+    FavoritesScreen(key: ValueKey('favorites_$_favoritesScreenKey')),
+    const SettingsScreen(),
   ];
 
   final List<AdaptiveTab> _tabs = const [
@@ -130,6 +134,12 @@ class _MainScreenState extends State<MainScreen> {
       onTabChanged: (index) {
         setState(() {
           _currentIndex = index;
+          // Обновляем ключи при переключении на соответствующие вкладки
+          if (index == 1) {
+            _recentScreenKey++;
+          } else if (index == 2) {
+            _favoritesScreenKey++;
+          }
         });
       },
       tabs: _tabs,

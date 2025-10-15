@@ -10,12 +10,12 @@ class PlatformButton extends StatelessWidget {
   final double? minSize;
 
   const PlatformButton({
-    Key? key,
+    super.key,
     required this.onPressed,
     required this.child,
     this.color,
     this.minSize,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,7 @@ class PlatformButton extends StatelessWidget {
       return CupertinoButton(
         onPressed: onPressed,
         color: color,
-        minSize: minSize ?? 44.0,
-        child: child,
+        child: child, minimumSize: Size(minSize ?? 44.0, minSize ?? 44.0),
       );
     }
 
@@ -45,11 +44,11 @@ class PlatformSwitch extends StatelessWidget {
   final Color? activeColor;
 
   const PlatformSwitch({
-    Key? key,
+    super.key,
     required this.value,
     this.onChanged,
     this.activeColor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +56,14 @@ class PlatformSwitch extends StatelessWidget {
       return CupertinoSwitch(
         value: value,
         onChanged: onChanged,
-        activeColor: activeColor,
+        activeTrackColor: activeColor,
       );
     }
 
     return Switch(
       value: value,
       onChanged: onChanged,
-      activeColor: activeColor,
+      activeThumbColor: activeColor,
     );
   }
 }
@@ -73,7 +72,7 @@ class PlatformSwitch extends StatelessWidget {
 class PlatformLoadingIndicator extends StatelessWidget {
   final double? radius;
 
-  const PlatformLoadingIndicator({Key? key, this.radius}) : super(key: key);
+  const PlatformLoadingIndicator({super.key, this.radius});
 
   @override
   Widget build(BuildContext context) {
@@ -147,12 +146,12 @@ class PlatformIcon extends StatelessWidget {
   final Color? color;
 
   const PlatformIcon({
-    Key? key,
+    super.key,
     required this.materialIcon,
     this.cupertinoIcon,
     this.size,
     this.color,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

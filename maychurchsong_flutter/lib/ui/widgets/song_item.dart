@@ -8,12 +8,12 @@ class SongItem extends StatelessWidget {
   final double fontSize;
 
   const SongItem({
-    Key? key,
+    super.key,
     required this.song,
     required this.onTap,
     this.onFavoriteToggle,
     this.fontSize = 13.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
